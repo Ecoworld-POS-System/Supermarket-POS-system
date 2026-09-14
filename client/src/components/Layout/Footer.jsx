@@ -16,15 +16,11 @@ export default function Footer() {
 
                 {/* Contact Information */}
                 <div className="footer-links">
-                    <span>
-                        egotechworld.com
-                    </span>
-
+                    <span>egotechworld.com</span>
                     <span>|</span>
-
-                    <span>
-                        +94 74 312 6123
-                    </span>
+                    <span>contact@egotechworld.com</span>
+                    <span>|</span>
+                    <span>+94 74 312 6123</span>
                 </div>
 
             </div>
