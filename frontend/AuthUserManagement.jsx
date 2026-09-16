@@ -17,6 +17,7 @@ import {
   Copy,
   RefreshCw,
   Lock,
+  Eye,
   EyeOff,
   Menu,
 } from "lucide-react";
@@ -151,6 +152,7 @@ function Sidebar({ active, mobileOpen, onClose }) {
         </button>
       </div>
     </aside>
+    </>
   );
 }
 
