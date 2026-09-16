@@ -15,7 +15,15 @@ const CategoryManagement = () => {
   const [deleteCategoryTarget, setDeleteCategoryTarget] = useState(null);
 
   useEffect(() => {
-    setCategories(getCategories());
+    const loadData = async () => {
+      try {
+        const categoriesData = await getCategories();
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error('Failed to load categories:', error);
+      }
+    };
+    loadData();
   }, []);
 
   const handleOpenAddModal = () => {
@@ -33,19 +41,27 @@ const CategoryManagement = () => {
     setEditingCategory(null);
   };
 
-  const handleSaveCategory = (categoryData) => {
-    const updated = saveCategory(categoryData);
-    setCategories(updated);
+  const handleSaveCategory = async (categoryData) => {
+    try {
+      const updated = await saveCategory(categoryData);
+      setCategories(updated);
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   const handleOpenDeleteModal = (category) => {
     setDeleteCategoryTarget(category);
   };
 
-  const handleConfirmDelete = (id) => {
-    const updated = deleteCategory(id);
-    setCategories(updated);
-    setDeleteCategoryTarget(null);
+  const handleConfirmDelete = async (id) => {
+    try {
+      const updated = await deleteCategory(id);
+      setCategories(updated);
+      setDeleteCategoryTarget(null);
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   // Filter categories by search

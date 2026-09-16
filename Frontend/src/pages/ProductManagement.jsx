@@ -19,8 +19,19 @@ const ProductManagement = () => {
   const [deleteProductTarget, setDeleteProductTarget] = useState(null);
 
   useEffect(() => {
-    setProducts(getProducts());
-    setCategories(getCategories());
+    const loadData = async () => {
+      try {
+        const [productsData, categoriesData] = await Promise.all([
+          getProducts(),
+          getCategories(),
+        ]);
+        setProducts(productsData);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error('Failed to load data:', error);
+      }
+    };
+    loadData();
   }, []);
 
   const handleOpenAddModal = () => {
@@ -38,19 +49,27 @@ const ProductManagement = () => {
     setEditingProduct(null);
   };
 
-  const handleSaveProduct = (productData) => {
-    const updated = saveProduct(productData);
-    setProducts(updated);
+  const handleSaveProduct = async (productData) => {
+    try {
+      const updated = await saveProduct(productData);
+      setProducts(updated);
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   const handleOpenDeleteModal = (product) => {
     setDeleteProductTarget(product);
   };
 
-  const handleConfirmDelete = (id) => {
-    const updated = deleteProduct(id);
-    setProducts(updated);
-    setDeleteProductTarget(null);
+  const handleConfirmDelete = async (id) => {
+    try {
+      const updated = await deleteProduct(id);
+      setProducts(updated);
+      setDeleteProductTarget(null);
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   // Filter products by search, category, and status

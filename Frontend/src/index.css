@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Original Primary Blue Palette (#2563EB) */
-  --primary: #2563EB;
-  --primary-hover: #1D4ED8;
-  --primary-light: #EFF6FF;
+  /* Very Light, Airy Soft Pastel Sky Blue Primary Palette (#6B9CD2) */
+  --primary: #6B9CD2;
+  --primary-hover: #5A8BC1;
+  --primary-light: #F4F8FC;
   --bg-screen: #F8FAFC;
   --bg-surface: #FFFFFF;
   
@@ -164,8 +164,8 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: #EFF6FF;
-  color: #2563EB;
+  background-color: #F4F8FC;
+  color: #6B9CD2;
   font-weight: 700;
   font-size: 0.75rem;
   display: flex;
@@ -186,7 +186,7 @@ body {
 
 .admin-name {
   font-size: 0.75rem;
-  color: #2563EB;
+  color: #6B9CD2;
   font-weight: 600;
   text-decoration: none;
 }
@@ -506,8 +506,8 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  background-color: #EFF6FF;
-  color: #2563EB;
+  background-color: #F4F8FC;
+  color: #6B9CD2;
   font-weight: 700;
   font-size: 0.75rem;
   display: flex;
@@ -634,8 +634,8 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: #EFF6FF;
-  color: #2563EB;
+  background-color: #F4F8FC;
+  color: #6B9CD2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -774,7 +774,7 @@ body {
 
 .tab-btn.active {
   background-color: #FFFFFF;
-  color: #2563EB;
+  color: #6B9CD2;
   box-shadow: var(--shadow-sm);
 }
 
@@ -788,16 +788,16 @@ body {
   gap: 6px;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #2563EB;
-  background-color: #EFF6FF;
-  border: 1px solid #BFDBFE;
+  color: #6B9CD2;
+  background-color: #F4F8FC;
+  border: 1px solid #CBD5E1;
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
 }
 
 .file-upload-label:hover {
-  background-color: #DBEAFE;
+  background-color: #E2E8F0;
 }
 
 .form-group-new {
@@ -827,7 +827,7 @@ body {
 
 .form-control-new:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px rgba(107, 156, 210, 0.2);
 }
 
 .input-with-button {
