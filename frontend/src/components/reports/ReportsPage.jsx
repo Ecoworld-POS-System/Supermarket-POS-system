@@ -1,19 +1,16 @@
 import React from "react";
 import {
   BarChart3,
-  Download,
   CreditCard,
   Banknote,
   QrCode,
-  Users,
   Award,
-  Calendar,
   FileSpreadsheet,
 } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 
 export default function ReportsPage() {
-  const { bills, products, users } = useApp();
+  const { bills, products, users: _users } = useApp();
 
   const completedBills = bills.filter((b) => b.status === "Completed");
   const totalRevenue = completedBills.reduce((sum, b) => sum + b.total, 0);
@@ -180,7 +177,7 @@ export default function ReportsPage() {
           </div>
 
           <div className="space-y-2.5">
-            {products.slice(0, 5).map((p, idx) => (
+            {products.slice(0, 5).map((p) => (
               <div
                 key={p.id}
                 className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs"

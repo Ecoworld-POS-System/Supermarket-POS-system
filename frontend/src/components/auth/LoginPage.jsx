@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Eye, EyeOff, Lock, User, Shield, CheckCircle2 } from "lucide-react";
+import { Eye, EyeOff, Lock, User } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 
 export default function LoginPage() {

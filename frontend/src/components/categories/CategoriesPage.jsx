@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Tag, Plus, Layers, Package, X } from "lucide-react";
+import { Tag, Plus, X } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 
 export default function CategoriesPage() {

@@ -5,7 +5,7 @@ import {
   X, Copy, RefreshCw, Lock, Eye, EyeOff, Shield, CheckCircle,
   AlertTriangle, Trash2, ChevronDown, ArrowLeft, KeyRound,
   Building2, UserCheck, UserX, Phone, Mail, Clock, Filter,
-  MoreHorizontal, Check, XCircle,
+  Check, XCircle,
 } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -137,7 +137,7 @@ const NAV_ITEMS = [
   { icon: BarChart3,   label: "Reports",          tab: "reports"   },
 ];
 
-function Sidebar({ activeTab, setActiveTab, currentUser, onLogout, lowNotif = 4 }) {
+function Sidebar({ activeTab, setActiveTab, currentUser, onLogout, _lowNotif = 4 }) {
   return (
     <aside className="hidden md:flex md:flex-col w-64 bg-white border-r border-slate-200 h-full shrink-0 z-20">
       {/* Brand */}

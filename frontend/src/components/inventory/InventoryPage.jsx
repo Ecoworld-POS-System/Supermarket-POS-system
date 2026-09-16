@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import {
-  Boxes,
   AlertTriangle,
   PlusCircle,
   ArrowUpRight,
   Search,
-  CheckCircle2,
   X,
-  Building,
 } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 import { INITIAL_SUPPLIERS } from "../../data/mockData";

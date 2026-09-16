@@ -1,24 +1,24 @@
 import React from "react";
-import { X, Printer, CheckCircle, Download } from "lucide-react";
+import { X, Printer, CheckCircle } from "lucide-react";
 import confetti from "canvas-confetti";
-
 export default function ReceiptModal({ bill, onClose }) {
-  if (!bill) return null;
-
   const handlePrint = () => {
     window.print();
   };
 
   // Trigger celebration confetti on mount
   React.useEffect(() => {
+    if (!bill) return;
     try {
       confetti({
         particleCount: 40,
         spread: 60,
         origin: { y: 0.7 },
       });
-    } catch (e) {}
-  }, []);
+    } catch (_e) {}
+  }, [bill]);
+
+  if (!bill) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-fade-in no-print-backdrop">

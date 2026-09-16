@@ -6,15 +6,11 @@ import {
   Users,
   AlertTriangle,
   ArrowRight,
-  Plus,
-  Receipt,
-  CheckCircle,
-  Package,
 } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 
 export default function DashboardPage({ setActiveTab }) {
-  const { bills, products, users, lowStockCount, activeBranch } = useApp();
+  const { bills, products: _products, users, lowStockCount, activeBranch } = useApp();
 
   const totalRevenue = bills
     .filter((b) => b.status === "Completed")

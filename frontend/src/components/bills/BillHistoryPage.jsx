@@ -2,14 +2,10 @@ import React, { useState } from "react";
 import {
   Search,
   FileClock,
-  Printer,
   RotateCcw,
-  Calendar,
-  Building,
   CreditCard,
   Banknote,
   QrCode,
-  DollarSign,
   Receipt,
 } from "lucide-react";
 import { useApp } from "../../context/AppContext";
@@ -17,7 +13,7 @@ import { BRANCHES } from "../../data/mockData";
 import ReceiptModal from "../pos/ReceiptModal";
 
 export default function BillHistoryPage() {
-  const { bills, refundBill, activeBranch } = useApp();
+  const { bills, refundBill, activeBranch: _activeBranch } = useApp();
   const [search, setSearch] = useState("");
   const [branchFilter, setBranchFilter] = useState("All Branches");
   const [paymentFilter, setPaymentFilter] = useState("All Methods");

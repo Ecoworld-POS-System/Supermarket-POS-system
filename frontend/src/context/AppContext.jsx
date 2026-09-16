@@ -4,7 +4,6 @@ import {
   INITIAL_PRODUCTS,
   INITIAL_CATEGORIES,
   INITIAL_BILLS,
-  INITIAL_SUPPLIERS,
   genInvoiceNumber,
 } from "../data/mockData";
 
@@ -207,7 +206,7 @@ export function AppProvider({ children }) {
     setProducts((prev) => prev.filter((p) => p.id !== prodId));
   };
 
-  const adjustStock = (prodId, quantity, reason = "Adjustment") => {
+  const adjustStock = (prodId, quantity, _reason = "Adjustment") => {
     setProducts((prev) =>
       prev.map((p) => {
         if (p.id === prodId) {

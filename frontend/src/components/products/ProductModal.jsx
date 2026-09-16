@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Package, Barcode, Tag } from "lucide-react";
+import { X, Package } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 
 export default function ProductModal({ editingProduct, onClose, onSave }) {

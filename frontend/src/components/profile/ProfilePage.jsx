@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowLeft, Lock, CheckCircle2, Shield, Building, User } from "lucide-react";
+import { ArrowLeft, Lock, CheckCircle2 } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 import { ROLES, BRANCHES } from "../../data/mockData";
 

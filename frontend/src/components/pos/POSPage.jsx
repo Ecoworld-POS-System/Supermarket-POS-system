@@ -10,9 +10,7 @@ import {
   Banknote,
   QrCode,
   CheckCircle,
-  AlertCircle,
   Tag,
-  RotateCcw,
 } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 import ReceiptModal from "./ReceiptModal";

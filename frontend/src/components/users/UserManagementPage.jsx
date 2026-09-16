@@ -7,7 +7,6 @@ import {
   Trash2,
   CheckCircle,
   XCircle,
-  ShieldCheck,
   Building,
 } from "lucide-react";
 import { useApp } from "../../context/AppContext";

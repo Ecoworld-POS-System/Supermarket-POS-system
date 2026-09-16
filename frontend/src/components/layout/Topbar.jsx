@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
   MapPin,
-  ChevronDown,
   UserCheck,
   ShoppingCart,
-  Sparkles,
 } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 import { BRANCHES } from "../../data/mockData";

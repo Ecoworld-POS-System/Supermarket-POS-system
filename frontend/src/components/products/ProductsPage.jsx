@@ -5,9 +5,6 @@ import {
   Plus,
   Pencil,
   Trash2,
-  AlertTriangle,
-  Barcode,
-  Layers,
 } from "lucide-react";
 import { useApp } from "../../context/AppContext";
 import ProductModal from "./ProductModal";
