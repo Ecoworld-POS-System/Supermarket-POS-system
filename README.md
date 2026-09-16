@@ -1,90 +1,156 @@
-# EgoTech World: Supermarket POS & ERP System
+# Authentication and User Management
 
-Welcome to the **EgoTech World POS & ERP System**, a modern, responsive, and robust point-of-sale and enterprise resource planning application built specifically for retail and supermarket management.
+This component provides authentication and staff account management for the EgoTech World retail system. It gives employees a sign-in screen and administrators a central place to manage staff identities, roles, branches, and account status.
 
-## 🌟 Overview
+## Scope
 
-Designed with usability and performance in mind, this system streamlines daily supermarket operations. From secure authentication and employee management to real-time inventory tracking and billing, it provides a seamless experience across all devices—whether your staff is using a desktop at the main checkout counter or a tablet on the shop floor.
+This component covers:
 
-## ✨ Key Features
+- Employee sign-in using an employee ID, username, or email address
+- Active and inactive account handling
+- Role-based staff records for Admin, Manager, Cashier, Supervisor, and Inventory Staff
+- Branch assignment for each employee
+- User search by name, employee ID, or email
+- Filtering users by role and account status
+- Adding, editing, activating, deactivating, and deleting users
+- Last-login tracking and current-user session persistence
+- Responsive layouts for desktop, tablet, and mobile screens
 
-- **Secure Authentication & User Management:** Comprehensive employee onboarding, role-based access control (Admin, Manager, Cashier, Supervisor), and secure session management.
-- **Responsive & Intuitive UI:** A beautifully crafted, mobile-first interface powered by Tailwind CSS that adapts perfectly to desktops, tablets, and mobile devices.
-- **Real-Time Inventory & Billing:** Track products, categories, and stock levels effortlessly. Process bills with dynamic inventory decrementing and refund handling.
-- **Executive Dashboard:** Instant insights into total revenue, bill counts, active staff, and low-stock alerts.
-- **Scalable Database Architecture:** Fully integrated with MongoDB to ensure your data is secure, centralized, and highly available.
+## Main Screens
 
-## 🛠️ Technology Stack
+### Login
 
-Our system leverages a modern, full-stack JavaScript environment:
+The login screen supports:
 
-- **Frontend:** React (Vite), Tailwind CSS, Lucide React (Icons)
-- **Backend:** Node.js, Express.js
-- **Database:** MongoDB, Mongoose ODM
-- **Deployment & Tooling:** Environment configured for rapid development with hot module replacement (HMR).
+- Employee ID or username input
+- Password visibility toggle
+- Remember-this-station option
+- Loading and validation states
+- Clear messages for invalid or deactivated accounts
+- Quick demo sign-ins for Admin, Cashier, Manager, and Inventory Staff personas
 
-## 🚀 Getting Started
+### User Management
 
-Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
+The staff management screen provides:
+
+- Total, active, and inactive staff counts
+- Search and role/status filters
+- Employee ID, email, role, branch, status, and last-activity details
+- Add and edit user modal forms
+- Generated employee IDs and temporary passwords for new accounts
+- User activation/deactivation controls
+- Delete confirmation before removing an account
+
+## Roles and Branches
+
+Supported roles:
+
+- Admin
+- Manager
+- Cashier
+- Supervisor
+- Inventory Staff
+
+Configured branches include Colombo Head Office, Kandy, Galle, Negombo, and Matara.
+
+## Technology
+
+- **Frontend:** React 19, Vite, Tailwind CSS, Lucide React
+- **Backend:** Node.js, Express, Mongoose
+- **Database:** MongoDB
+- **Client persistence:** Browser `localStorage` for the demo session and user list
+
+## Project Structure
+
+```text
+backend/
+  models.js       User schema and related data models
+  server.js       Express API, authentication, and user routes
+frontend/
+  AuthUserManagement.jsx
+  src/
+    components/auth/LoginPage.jsx
+    components/users/UserManagementPage.jsx
+    components/users/UserModal.jsx
+    context/AppContext.jsx
+```
+
+## API Endpoints
+
+### Authentication
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `POST` | `/api/auth/login` | Sign in with an employee ID, username, or email |
+
+### Users
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/users` | List users |
+| `POST` | `/api/users` | Create a user |
+| `PUT` | `/api/users/:id` | Update user details |
+| `PATCH` | `/api/users/:id/status` | Toggle Active/Inactive status |
+| `DELETE` | `/api/users/:id` | Delete a user |
+
+The backend also exposes `GET /api/health` for a basic service health check.
+
+## Getting Started
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v16.0 or higher recommended)
-- A [MongoDB](https://www.mongodb.com/) cluster or local instance.
+- Node.js 16 or newer
+- A MongoDB instance accessible by the backend
 
-### Installation
+### Install dependencies
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Ecoworld-POS-System/Supermarket-POS-system.git
-   cd Supermarket-POS-system
-   ```
+From the project root:
 
-2. **Setup the Backend**
-   ```bash
-   cd backend
-   npm install
-   ```
-   *Note: Ensure your `MONGODB_URI` is correctly configured in your environment or `server.js` before starting the server.*
-
-3. **Setup the Frontend**
-   ```bash
-   cd ../frontend
-   npm install
-   ```
-
-### Running the Application
-
-To run the application locally, you will need to start both the backend server and the frontend development server.
-
-**Start the Backend (API Server):**
 ```bash
 cd backend
-npm start
-# The backend will run on http://localhost:5170 (or 5000 based on configuration)
+npm install
+
+cd ../frontend
+npm install
 ```
 
-**Start the Frontend (UI):**
+### Start the backend
+
+In one terminal:
+
+```bash
+cd backend
+npm run dev
+```
+
+The API listens on `http://localhost:5000` by default.
+
+### Start the frontend
+
+In a second terminal:
+
 ```bash
 cd frontend
 npm run dev
-# The frontend will run on http://localhost:5173
 ```
 
-## 📱 Mobile Responsiveness
+Vite prints the local frontend URL, normally `http://localhost:5173`.
 
-The user interface has been meticulously designed to be fully responsive. Navigational elements smoothly collapse into a hamburger menu on smaller screens, and data grids intelligently stack to provide an optimal viewing experience on smartphones and tablets without sacrificing functionality.
+### Build the frontend
 
-## 🤝 Contributing
+```bash
+cd frontend
+npm run build
+```
 
-We welcome contributions to make this POS system even better. If you have a suggestion or a bug fix, please feel free to fork the repository, create a feature branch, and submit a Pull Request.
+## Demo Login
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+The demo supports the seeded Administrator account and quick persona buttons on the login screen. In the current demo flow, `admin123` can be used as the password for a quick login or for a valid demo sign-in.
 
-## 📄 License
+For production use, replace the demo authentication flow with hashed passwords, signed sessions or JWTs, protected API middleware, and environment-based database configuration.
 
-© 2026 EgoTechWorld (Pvt) Ltd. All rights reserved.
+## Notes
+
+- The current React context persists users and the active session in browser `localStorage`.
+- The backend connects to MongoDB and seeds initial user data when the users collection is empty.
+- Account status is checked during login, so inactive users cannot sign in.
