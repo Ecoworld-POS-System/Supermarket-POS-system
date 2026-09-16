@@ -17,8 +17,8 @@ import {
   Copy,
   RefreshCw,
   Lock,
-  Eye,
   EyeOff,
+  Menu,
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -68,7 +68,7 @@ function genEmpId(existing) {
 // ---------------------------------------------------------------------------
 // Sidebar
 // ---------------------------------------------------------------------------
-function Sidebar({ active }) {
+function Sidebar({ active, mobileOpen, onClose }) {
   const items = [
     { icon: LayoutGrid, label: "Dashboard" },
     { icon: Package, label: "Products" },
@@ -80,15 +80,30 @@ function Sidebar({ active }) {
     { icon: BarChart3, label: "Reports" },
   ];
   return (
-    <aside className="hidden md:flex md:flex-col w-64 bg-white border-r border-slate-200 h-full shrink-0">
+    <>
+      {mobileOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-slate-900/50 md:hidden"
+          onClick={onClose}
+        />
+      )}
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 flex flex-col w-64 bg-white border-r border-slate-200 h-full shrink-0
+        transform transition-transform duration-200 ease-in-out
+        md:relative md:translate-x-0
+        ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
       <div className="flex items-center gap-2 px-5 h-16 border-b border-slate-100">
         <div className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center text-xs font-bold">
           ET
         </div>
-        <div className="leading-tight">
+        <div className="leading-tight flex-1">
           <p className="text-sm font-semibold text-slate-800">EGOTECH</p>
           <p className="text-sm font-semibold text-primary -mt-0.5">WORLD</p>
         </div>
+        <button onClick={onClose} className="md:hidden text-slate-400 hover:text-slate-600">
+          <X size={20} />
+        </button>
       </div>
 
       <p className="px-5 pt-5 pb-2 text-[11px] font-medium tracking-wide text-slate-400">
@@ -139,13 +154,19 @@ function Sidebar({ active }) {
   );
 }
 
-function Topbar({ crumb, page }) {
+function Topbar({ crumb, page, onOpenSidebar }) {
   return (
-    <div className="flex items-center justify-between px-6 h-14 border-b border-slate-100 bg-white">
-      <p className="text-xs text-slate-400">
-        {crumb} <span className="text-slate-300">/</span>{" "}
-        <span className="text-slate-600 font-medium">{page}</span>
-      </p>
+    <div className="flex items-center justify-between px-4 md:px-6 h-14 border-b border-slate-100 bg-white">
+      <div className="flex items-center gap-3">
+        <button onClick={onOpenSidebar} className="md:hidden text-slate-500 hover:text-slate-700">
+          <Menu size={20} />
+        </button>
+        <p className="text-xs text-slate-400 hidden sm:block">
+          {crumb} <span className="text-slate-300">/</span>{" "}
+          <span className="text-slate-600 font-medium">{page}</span>
+        </p>
+        <p className="text-sm sm:hidden font-medium text-slate-700">{page}</p>
+      </div>
       <p className="text-xs text-slate-400">Wednesday, 13 August 2026</p>
     </div>
   );
@@ -255,7 +276,7 @@ function UserModal({ existingUsers, editingUser, onClose, onSave }) {
             {errors.name && <p className="text-xs text-rose-500 mt-1">{errors.name}</p>}
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-[11px] font-medium text-slate-500">EMAIL ADDRESS *</label>
               <input
@@ -281,7 +302,7 @@ function UserModal({ existingUsers, editingUser, onClose, onSave }) {
 
           <div>
             <label className="text-[11px] font-medium text-slate-500">ROLE *</label>
-            <div className="mt-1.5 grid grid-cols-2 gap-2">
+            <div className="mt-1.5 grid grid-cols-1 sm:grid-cols-2 gap-2">
               {ROLES.map((r) => (
                 <label
                   key={r}
@@ -428,9 +449,9 @@ function UserManagementPage({ onOpenProfile }) {
 
   return (
     <div className="p-6">
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-4 py-2.5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-4 py-2.5 flex-1 sm:flex-none">
             <Users size={16} className="text-slate-400" />
             <div>
               <p className="text-lg font-semibold text-slate-800 leading-none">{users.length}</p>
@@ -836,16 +857,25 @@ export default function AuthUserManagement() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [view, setView] = useState("list"); // "list" | "profile"
   const [profileUser, setProfileUser] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   if (!loggedIn) {
     return <LoginPage onLogin={() => setLoggedIn(true)} />;
   }
 
   return (
-    <div className="h-full w-full bg-slate-50 flex">
-      <Sidebar active="User Management" />
-      <div className="flex-1 flex flex-col min-w-0">
-        <Topbar crumb="EGOTECH WORLD" page={view === "profile" ? "My Profile" : "User Management"} />
+    <div className="h-full w-full bg-slate-50 flex overflow-hidden">
+      <Sidebar 
+        active="User Management" 
+        mobileOpen={mobileMenuOpen} 
+        onClose={() => setMobileMenuOpen(false)} 
+      />
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+        <Topbar 
+          crumb="EGOTECH WORLD" 
+          page={view === "profile" ? "My Profile" : "User Management"} 
+          onOpenSidebar={() => setMobileMenuOpen(true)}
+        />
         <div className="flex-1 overflow-y-auto">
           {view === "profile" && profileUser ? (
             <ProfilePage user={profileUser} onBack={() => setView("list")} />
