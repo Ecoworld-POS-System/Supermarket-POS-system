@@ -1,6 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #2563EB;
+  --color-primary-hover: #1D4ED8;
+}
+
+:root {
+  --primary: #2563EB;
+  --primary-hover: #1D4ED8;
+}
+
 @layer base {
   * {
     box-sizing: border-box;

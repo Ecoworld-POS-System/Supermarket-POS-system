@@ -82,12 +82,12 @@ function Sidebar({ active }) {
   return (
     <aside className="hidden md:flex md:flex-col w-64 bg-white border-r border-slate-200 h-full shrink-0">
       <div className="flex items-center gap-2 px-5 h-16 border-b border-slate-100">
-        <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold">
+        <div className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center text-xs font-bold">
           ET
         </div>
         <div className="leading-tight">
           <p className="text-sm font-semibold text-slate-800">EGOTECH</p>
-          <p className="text-sm font-semibold text-blue-600 -mt-0.5">WORLD</p>
+          <p className="text-sm font-semibold text-primary -mt-0.5">WORLD</p>
         </div>
       </div>
 
@@ -102,7 +102,7 @@ function Sidebar({ active }) {
               key={label}
               className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                 isActive
-                  ? "bg-blue-600 text-white font-medium"
+                  ? "bg-primary text-white font-medium"
                   : "text-slate-600 hover:bg-slate-50"
               }`}
             >
@@ -217,7 +217,7 @@ function UserModal({ existingUsers, editingUser, onClose, onSave }) {
       <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden">
         <div className="flex items-start justify-between px-6 pt-5 pb-4 border-b border-slate-100">
           <div className="flex items-start gap-3">
-            <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-lg bg-blue-50 text-primary flex items-center justify-center">
               <UserPlus size={17} />
             </div>
             <div>
@@ -383,7 +383,7 @@ function UserModal({ existingUsers, editingUser, onClose, onSave }) {
           </button>
           <button
             onClick={handleSubmit}
-            className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+            className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-primary text-white hover:bg-primary-hover"
           >
             <UserPlus size={15} /> {isEdit ? "Save Changes" : "Create User"}
           </button>
@@ -458,7 +458,7 @@ function UserManagementPage({ onOpenProfile }) {
             setEditingUser(null);
             setModalOpen(true);
           }}
-          className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg"
+          className="flex items-center gap-1.5 bg-primary hover:bg-primary-hover text-white text-sm font-medium px-4 py-2.5 rounded-lg"
         >
           <UserPlus size={15} /> Add New User
         </button>
@@ -528,7 +528,7 @@ function UserManagementPage({ onOpenProfile }) {
                       <div className="leading-tight">
                         <button
                           onClick={() => onOpenProfile(u)}
-                          className="font-medium text-slate-800 hover:text-blue-600 text-left"
+                          className="font-medium text-slate-800 hover:text-primary text-left"
                         >
                           {u.name}
                         </button>
@@ -598,7 +598,7 @@ function ProfilePage({ user, onBack }) {
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      <button onClick={onBack} className="text-xs text-blue-600 font-medium mb-4">
+      <button onClick={onBack} className="text-xs text-primary font-medium mb-4">
         ← Back to User Management
       </button>
 
@@ -608,7 +608,7 @@ function ProfilePage({ user, onBack }) {
       </p>
 
       <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden mb-5">
-        <div className="h-16 bg-gradient-to-r from-blue-600 to-blue-500" />
+        <div className="h-16 bg-gradient-to-r from-primary to-primary-hover" />
         <div className="px-6 -mt-8 pb-6">
           <div className="w-16 h-16 rounded-2xl bg-slate-700 text-white flex items-center justify-center text-lg font-semibold ring-4 ring-white">
             {form.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
@@ -683,7 +683,7 @@ function ProfilePage({ user, onBack }) {
               setSaved(true);
               setTimeout(() => setSaved(false), 1500);
             }}
-            className="mt-5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg"
+            className="mt-5 bg-primary hover:bg-primary-hover text-white text-sm font-medium px-4 py-2.5 rounded-lg"
           >
             {saved ? "Saved ✓" : "Save Changes"}
           </button>
@@ -760,7 +760,7 @@ function LoginPage({ onLogin }) {
   };
 
   return (
-    <div className="min-h-full w-full bg-gradient-to-b from-blue-700 to-blue-900 flex flex-col items-center justify-center px-4 py-16">
+    <div className="min-h-full w-full bg-gradient-to-b from-primary to-primary-hover flex flex-col items-center justify-center px-4 py-16">
       <div className="w-9 h-9 rounded-lg bg-white/15 text-white flex items-center justify-center text-xs font-bold mb-3">
         ET
       </div>
@@ -811,7 +811,7 @@ function LoginPage({ onLogin }) {
 
         <button
           onClick={handleLogin}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2.5 rounded-lg"
+          className="w-full bg-primary hover:bg-primary-hover text-white text-sm font-medium py-2.5 rounded-lg"
         >
           Log In
         </button>
