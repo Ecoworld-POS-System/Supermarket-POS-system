@@ -74,7 +74,7 @@ const billSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-});
+}, { collection: 'pos_checkout_bills' });
 
 const Bill = mongoose.model('Bill', billSchema);
 

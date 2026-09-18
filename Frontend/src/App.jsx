@@ -1,48 +1,66 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import Sidebar        from './components/Sidebar';
+import AppLayout from './components/Layout/AppLayout';
 import ProductCatalog from './components/billing/ProductCatalog';
-import CartSidebar    from './components/billing/CartSidebar';
-import PaymentModal   from './components/billing/PaymentModal';
-import ReceiptModal   from './components/billing/ReceiptModal';
+import CartSidebar from './components/billing/CartSidebar';
+import PaymentModal from './components/billing/PaymentModal';
+import ReceiptModal from './components/billing/ReceiptModal';
+import ReportsAnalyticsView from './components/analytics/ReportsAnalyticsView';
+import BillHistoryView from './components/bill-history/BillHistoryView';
 import './App.css';
 
-/**
- * App — Root POS shell.
- *
- * Layout: [Nav Sidebar] | [Billing View: ProductCatalog + CartSidebar]
- *
- * Data flow:
- *   ProductCatalog  ──onStockUpdate──▶  App (products state)
- *   App             ──products──▶       CartSidebar  (stock cap per item)
- *   CartSidebar     ──onPayment──▶      App → opens PaymentModal
- *   PaymentModal    ──onConfirm──▶      App (savedBill + paymentDetails)
- *   App             ──▶                 ReceiptModal (savedBill + payment)
- *   ReceiptModal    ──onNewBill──▶      App → clear cart
- *
- * Keyboard shortcuts:
- *   F1     → open PaymentModal  (billing page, cart non-empty)
- *   F2     → focus barcode search  (handled inside ProductCatalog)
- *   F4     → clear cart
- *   Escape → close topmost modal
- */
 export default function App() {
-  const [activePage, setActivePage] = useState('billing');
+  const getPageFromHash = () => {
+    const hash = window.location.hash.toLowerCase().replace('#', '');
+    if (hash === 'billing' || hash.startsWith('billing')) return 'billing';
+    if (hash.includes('report') || hash.includes('analytics')) return 'reports';
+    if (hash.includes('bill') || hash.includes('history')) return 'history';
+    if (hash === 'products') return 'products';
+    if (hash === 'categories') return 'categories';
+    if (hash === 'inventory') return 'inventory';
+    if (hash === 'users') return 'users';
+    if (hash === 'dashboard') return 'dashboard';
+    return 'billing';
+  };
 
-  /* ── Product stock index (refreshed from backend by ProductCatalog) ── */
-  // Keyed by product id for O(1) stock lookups during cart operations.
+  const [activePage, setActivePage] = useState(getPageFromHash);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setActivePage(getPageFromHash());
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const handleNavigate = (page) => {
+    setActivePage(page);
+    const hashMap = {
+      reports:    '#reports',
+      history:    '#bill-history',
+      billing:    '#billing',
+      dashboard:  '#dashboard',
+      products:   '#products',
+      categories: '#categories',
+      inventory:  '#inventory',
+      users:      '#users',
+    };
+    window.location.hash = hashMap[page] ?? `#${page}`;
+  };
+
+  /* ── Product stock index ── */
   const [productIndex, setProductIndex] = useState({});
 
-  /* ── Cart state ─────────────────────────────── */
-  const [cart, setCart]   = useState([]);
-  const billTimestamp     = useRef(new Date());
+  /* ── Cart state ── */
+  const [cart, setCart] = useState([]);
+  const billTimestamp = useRef(new Date());
 
-  /* ── Modal state ────────────────────────────── */
-  const [paymentOpen,  setPaymentOpen]  = useState(false);
-  const [receiptState, setReceiptState] = useState(null); // { savedBill, payment }
-  const pendingSummary                  = useRef(null);
+  /* ── Modal state ── */
+  const [paymentOpen, setPaymentOpen] = useState(false);
+  const [receiptState, setReceiptState] = useState(null);
+  const pendingSummary = useRef(null);
 
-  /* ── Keyboard shortcuts ─────────────────────── */
-  const openPayment  = useCallback(() => {
+  /* ── Keyboard shortcuts ── */
+  const openPayment = useCallback(() => {
     if (activePage === 'billing' && cart.length > 0) setPaymentOpen(true);
   }, [activePage, cart.length]);
 
@@ -51,7 +69,7 @@ export default function App() {
 
   useEffect(() => {
     function onKey(e) {
-      const tag     = document.activeElement?.tagName;
+      const tag = document.activeElement?.tagName;
       const inInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
 
       if (e.key === 'F1') {
@@ -63,7 +81,7 @@ export default function App() {
         if (!paymentOpen && !receiptState) handleClearCart();
       }
       if (e.key === 'Escape') {
-        if (paymentOpen)  closePayment();
+        if (paymentOpen) closePayment();
         if (receiptState) closeReceipt();
       }
     }
@@ -71,36 +89,30 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey);
   }, [paymentOpen, receiptState, openPayment, closePayment, closeReceipt]);
 
-  /* ── Stock update callback (called by ProductCatalog after fetch) ─── */
   const handleStockUpdate = useCallback((freshProducts) => {
     const index = {};
     freshProducts.forEach(p => { index[p.id] = p.stock; });
     setProductIndex(index);
-
-    // Sync live stock into any existing cart items so the stepper cap
-    // always reflects the most recent inventory snapshot.
     setCart(prev => prev.map(item => ({
       ...item,
       stock: index[item.id] ?? item.stock,
     })));
   }, []);
 
-  /* ── Cart mutations ─────────────────────────── */
   function handleAddItem(product) {
     setCart(prev => {
       const existing = prev.find(i => i.id === product.id);
       if (existing) {
-        // Respect stock cap even when adding via product grid
         const newQty = existing.qty + 1;
-        const cap    = productIndex[product.id] ?? product.stock ?? Infinity;
-        if (newQty > cap) return prev; // silently cap (CartSidebar shows the toast)
+        const cap = productIndex[product.id] ?? product.stock ?? Infinity;
+        if (newQty > cap) return prev;
         return prev.map(i => i.id === product.id ? { ...i, qty: newQty } : i);
       }
       return [
         ...prev,
         {
           ...product,
-          qty:   1,
+          qty: 1,
           stock: productIndex[product.id] ?? product.stock ?? 0,
         },
       ];
@@ -118,7 +130,7 @@ export default function App() {
   function handleDecrement(id) {
     setCart(prev =>
       prev.map(i => i.id === id ? { ...i, qty: i.qty - 1 } : i)
-          .filter(i => i.qty > 0),
+        .filter(i => i.qty > 0),
     );
   }
 
@@ -131,23 +143,14 @@ export default function App() {
     billTimestamp.current = new Date();
   }
 
-  /* ── Payment flow ───────────────────────────── */
   function handleOpenPaymentWithSummary(summary) {
     pendingSummary.current = summary;
     setPaymentOpen(true);
   }
 
-  /**
-   * Called by PaymentModal after a successful POST /api/bills.
-   * @param {Object} savedBill     – the full bill document from the server
-   * @param {Object} paymentDetails – local cash/card totals for the receipt UI
-   */
   function handlePaymentConfirm(savedBill, paymentDetails) {
     setPaymentOpen(false);
     setReceiptState({ savedBill, payment: paymentDetails });
-
-    // Deduct sold quantities from local product index so the catalog
-    // immediately reflects reduced stock without waiting for a full re-fetch.
     setProductIndex(prev => {
       const updated = { ...prev };
       (paymentDetails.cart ?? []).forEach(item => {
@@ -159,25 +162,35 @@ export default function App() {
     });
   }
 
-  /** ReceiptModal "New Bill" → reset everything */
   function handleNewBill() {
     setReceiptState(null);
     handleClearCart();
   }
 
-  /* ── Derived summary for PaymentModal fallback ── */
-  const TAX_RATE    = 0.08;
+  const TAX_RATE = 0.08;
   const cartSubtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
 
-  return (
-    <div className="app-shell">
-      {/* ── Navigation Sidebar ── */}
-      <Sidebar activePage={activePage} onNavigate={setActivePage} />
+  // Map activePage keys to readable titles for layout
+  const pageTitles = {
+    billing: 'Billing & Payment',
+    history: 'Bill History',
+    reports: 'Reports & Analytics',
+    dashboard: 'Dashboard',
+    products: 'Products',
+    categories: 'Categories',
+    inventory: 'Inventory',
+    users: 'User Management',
+  };
 
-      {/* ── Main Content Area ── */}
-      <main className="app-main">
+  return (
+    <AppLayout
+      activePage={activePage}
+      onNavigate={handleNavigate}
+    >
+      {/* ── Main Content Area Rendered Inside AppLayout ── */}
+      <div className="h-full">
         {activePage === 'billing' ? (
-          <div className="billing-view">
+          <div className="billing-view flex h-full">
             <ProductCatalog
               cart={cart}
               onAddItem={handleAddItem}
@@ -194,23 +207,27 @@ export default function App() {
               onPayment={handleOpenPaymentWithSummary}
             />
           </div>
+        ) : activePage === 'reports' ? (
+          <ReportsAnalyticsView />
+        ) : activePage === 'history' ? (
+          <BillHistoryView />
         ) : (
-          <div className="app-placeholder">
-            <p className="app-placeholder-label">
+          <div className="app-placeholder p-6">
+            <p className="app-placeholder-label text-gray-600 text-lg font-medium">
               {activePage.charAt(0).toUpperCase() + activePage.slice(1)} page coming soon.
             </p>
           </div>
         )}
-      </main>
+      </div>
 
       {/* ── Payment Modal ── */}
       {paymentOpen && (
         <PaymentModal
           summary={pendingSummary.current ?? {
-            subtotal:      cartSubtotal,
+            subtotal: cartSubtotal,
             discountValue: 0,
-            tax:           cartSubtotal * TAX_RATE,
-            grandTotal:    cartSubtotal * (1 + TAX_RATE),
+            tax: cartSubtotal * TAX_RATE,
+            grandTotal: cartSubtotal * (1 + TAX_RATE),
             cart,
           }}
           cashier="Admin"
@@ -228,6 +245,6 @@ export default function App() {
           onClose={closeReceipt}
         />
       )}
-    </div>
+    </AppLayout>
   );
 }
