@@ -1,35 +1,53 @@
 import mongoose from 'mongoose';
 
-// ─── Product Schema ───────────────────────────────────────────────────────────
-// Minimal model used by the Billing & Payment module for:
-//   • Barcode lookup during scanner entry
-//   • Stock deduction on successful bill creation
 const productSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: [true, 'Product name is required'],
+      trim: true,
+    },
+    skuCode: {
+      type: String,
+      trim: true,
+      default: '',
     },
     barcode: {
       type: String,
-      required: true,
-      unique: true,
-    },
-    price: {
-      type: Number,
-      required: true,
-    },
-    stock: {
-      type: Number,
-      required: true,
-      default: 0,
+      trim: true,
+      default: '',
     },
     category: {
       type: String,
+      required: [true, 'Category is required'],
+    },
+    price: {
+      type: Number,
+      required: [true, 'Price is required'],
+      min: [0, 'Price cannot be negative'],
+    },
+    stock: {
+      type: Number,
+      default: 0,
+      min: [0, 'Stock cannot be negative'],
+    },
+    lowStockThreshold: {
+      type: Number,
+      default: 10,
+    },
+    status: {
+      type: String,
+      enum: ['Active', 'Inactive'],
+      default: 'Active',
+    },
+    image: {
+      type: String,
+      trim: true,
+      default: '',
     },
   },
   {
-    timestamps: true, // adds createdAt & updatedAt automatically
+    timestamps: true,
   }
 );
 
