@@ -4,6 +4,8 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import productRoutes from './routes/productRoutes.js';
 import billRoutes from './routes/billRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
+import billHistoryRoutes from './routes/billhistoryRoutes.js';
 
 /* ─────────────────────────────────────────────────────────────
    App Initialization
@@ -47,6 +49,8 @@ app.get('/health', (_req, res) => {
 ───────────────────────────────────────────────────────────── */
 app.use('/api/products', productRoutes);
 app.use('/api/bills', billRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/bill-history', billHistoryRoutes);
 
 /* ─────────────────────────────────────────────────────────────
    404 Handler — for unmatched routes
@@ -78,10 +82,12 @@ const startServer = async () => {
 
   app.listen(PORT, () => {
     console.log(`\n🚀 Supermarket POS API is running`);
-    console.log(`   ➜  Local:   http://localhost:${PORT}`);
-    console.log(`   ➜  Health:  http://localhost:${PORT}/health`);
-    console.log(`   ➜  Products: http://localhost:${PORT}/api/products`);
-    console.log(`   ➜  Bills:    http://localhost:${PORT}/api/bills\n`);
+    console.log(`   ➜  Local:        http://localhost:${PORT}`);
+    console.log(`   ➜  Health:       http://localhost:${PORT}/health`);
+    console.log(`   ➜  Products:     http://localhost:${PORT}/api/products`);
+    console.log(`   ➜  Bills:        http://localhost:${PORT}/api/bills`);
+    console.log(`   ➜  Bill History: http://localhost:${PORT}/api/bill-history`);
+    console.log(`   ➜  Analytics:    http://localhost:${PORT}/api/analytics\n`);
   });
 };
 

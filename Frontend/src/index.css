@@ -1,9 +1,13 @@
+@import "tailwindcss";
+
 /* ─────────────────────────────────────────────
    EcoWorld POS — Global Styles & Design Tokens
    Light Retail Theme  (Food City / Keells style)
    ───────────────────────────────────────────── */
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -11,42 +15,63 @@
 
 :root {
   /* Brand Palette */
-  --clr-primary:       #059669;   /* emerald-600   */
-  --clr-primary-dark:  #047857;   /* emerald-700   */
-  --clr-primary-light: #d1fae5;   /* emerald-100   */
-  --clr-accent:        #d97706;   /* amber-600     */
-  --clr-accent-dark:   #b45309;   /* amber-700     */
-  --clr-danger:        #e11d48;   /* rose-600      */
-  --clr-danger-dark:   #be123c;   /* rose-700      */
-  --clr-info:          #2563eb;   /* blue-600      */
+  --clr-primary: #059669;
+  /* emerald-600   */
+  --clr-primary-dark: #047857;
+  /* emerald-700   */
+  --clr-primary-light: #d1fae5;
+  /* emerald-100   */
+  --clr-accent: #d97706;
+  /* amber-600     */
+  --clr-accent-dark: #b45309;
+  /* amber-700     */
+  --clr-danger: #e11d48;
+  /* rose-600      */
+  --clr-danger-dark: #be123c;
+  /* rose-700      */
+  --clr-info: #2563eb;
+  /* blue-600      */
 
   /* ── Pastel Sky-Blue Primary (Billing & Payment theme) ── */
-  --primary:           #6B9CD2;   /* Soft Pastel Sky Blue        */
-  --primary-hover:     #5A8BC1;   /* Slightly deeper on hover    */
-  --primary-light:     #F4F8FC;   /* Very light tint / bg        */
+  --primary: #6B9CD2;
+  /* Soft Pastel Sky Blue        */
+  --primary-hover: #5A8BC1;
+  /* Slightly deeper on hover    */
+  --primary-light: #F4F8FC;
+  /* Very light tint / bg        */
 
   /* Backgrounds — bright-room retail palette */
-  --bg-base:    #f1f5f9;    /* slate-100  — root canvas       */
-  --bg-surface: #ffffff;    /* white      — cards & panels    */
-  --bg-card:    #f8fafc;    /* slate-50   — nested cells      */
-  --bg-input:   #f1f5f9;    /* slate-100  — input fields      */
-  --bg-hover:   #e2e8f0;    /* slate-200  — hover state       */
+  --bg-base: #f1f5f9;
+  /* slate-100  — root canvas       */
+  --bg-surface: #ffffff;
+  /* white      — cards & panels    */
+  --bg-card: #f8fafc;
+  /* slate-50   — nested cells      */
+  --bg-input: #f1f5f9;
+  /* slate-100  — input fields      */
+  --bg-hover: #e2e8f0;
+  /* slate-200  — hover state       */
 
   /* Text — high-contrast for overhead lighting */
-  --txt-primary:   #0f172a;   /* slate-900  */
-  --txt-secondary: #475569;   /* slate-600  */
-  --txt-muted:     #94a3b8;   /* slate-400  */
+  --txt-primary: #0f172a;
+  /* slate-900  */
+  --txt-secondary: #475569;
+  /* slate-600  */
+  --txt-muted: #94a3b8;
+  /* slate-400  */
 
   /* Borders */
-  --border-default: #e2e8f0;   /* slate-200  */
-  --border-focus:   #059669;   /* emerald-600 */
+  --border-default: #e2e8f0;
+  /* slate-200  */
+  --border-focus: #059669;
+  /* emerald-600 */
 
   /* Shadows — light & subtle on white surfaces */
-  --shadow-sm:  0 1px 3px rgba(0,0,0,0.06);
-  --shadow-md:  0 4px 16px rgba(0,0,0,0.08);
-  --shadow-lg:  0 8px 32px rgba(0,0,0,0.10);
-  --glow-green: 0 0 18px rgba(5,150,105,0.2);
-  --glow-amber: 0 0 18px rgba(217,119,6,0.2);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.10);
+  --glow-green: 0 0 18px rgba(5, 150, 105, 0.2);
+  --glow-amber: 0 0 18px rgba(217, 119, 6, 0.2);
 
   /* Spacing */
   --gap-xs: 4px;
@@ -69,7 +94,9 @@
   --transition: all 0.2s ease;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   font-family: var(--font-body);
   background: var(--bg-base);
@@ -78,14 +105,33 @@ html, body, #root {
 }
 
 /* ── Scrollbar ─────────────────────────────── */
-::-webkit-scrollbar        { width: 6px; height: 6px; }
-::-webkit-scrollbar-track  { background: var(--bg-card); }
-::-webkit-scrollbar-thumb  { background: var(--border-default); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--txt-muted); }
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-card);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--txt-muted);
+}
 
 /* ── Utility ───────────────────────────────── */
 .sr-only {
-  position: absolute; width: 1px; height: 1px;
-  padding: 0; margin: -1px; overflow: hidden;
-  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
