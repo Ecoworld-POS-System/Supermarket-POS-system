@@ -173,7 +173,7 @@ export default function CartSidebar({
                   <p className="csb-item-unit">
                     {fmt(item.price)} / unit
                     {isLowStock && (
-                      <span className="csb-item-low-badge" title="Low stock">
+                      <span className="bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200 px-1.5 py-0.5 rounded-full text-[10px] font-medium inline-flex items-center gap-1 ml-1" title="Low stock">
                         <AlertTriangle size={10} /> {availableStock} left
                       </span>
                     )}
@@ -213,7 +213,7 @@ export default function CartSidebar({
                 {/* Remove */}
                 <button
                   id={`cart-remove-${item.id}`}
-                  className="csb-remove-btn"
+                  className="bg-rose-50 hover:bg-rose-100 active:bg-rose-200 text-rose-600 border border-rose-200 rounded-lg p-1.5 font-semibold transition-colors shrink-0"
                   onClick={() => onRemove(item.id)}
                   aria-label={`Remove ${item.name} from cart`}
                 >
@@ -266,19 +266,19 @@ export default function CartSidebar({
         {/* Divider */}
         <hr className="csb-divider" />
 
-        {/* Grand Total */}
-        <div className="csb-grand-total">
-          <span className="csb-grand-label">Grand Total</span>
-          <span className="csb-grand-value">{fmt(grandTotal)}</span>
+        {/* Grand Total Banner */}
+        <div className="bg-emerald-50 text-emerald-950 border-2 border-emerald-500 rounded-2xl p-4 flex items-center justify-between shadow-xs my-3">
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-900">Grand Total</span>
+          <span className="font-mono text-3xl font-extrabold text-emerald-700">{fmt(grandTotal)}</span>
         </div>
       </div>
 
       {/* ── Action Buttons ───────────────────────────── */}
-      <div className="csb-actions">
+      <div className="csb-actions flex flex-col gap-2 p-3">
         {/* Primary — Proceed to Payment */}
         <button
           id="cart-proceed-payment-btn"
-          className="csb-pay-btn"
+          className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold h-14 w-full rounded-xl text-base shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:bg-slate-300 disabled:cursor-not-allowed"
           onClick={handlePayment}
           disabled={cart.length === 0}
           aria-disabled={cart.length === 0}
@@ -287,10 +287,14 @@ export default function CartSidebar({
           <span>Proceed to Payment</span>
         </button>
 
-        {/* Secondary — Clear Cart */}
+        {/* Secondary / Danger — Clear Cart */}
         <button
           id="cart-clear-btn"
-          className={`csb-clear-btn${confirmClear ? ' confirm' : ''}`}
+          className={`px-2.5 py-1.5 font-semibold text-xs rounded-lg transition-colors flex items-center justify-center gap-1.5 w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
+            confirmClear
+              ? 'bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white border border-rose-600'
+              : 'bg-rose-50 hover:bg-rose-100 active:bg-rose-200 text-rose-600 border border-rose-200'
+          }`}
           onClick={handleClearClick}
           disabled={cart.length === 0}
           aria-disabled={cart.length === 0}

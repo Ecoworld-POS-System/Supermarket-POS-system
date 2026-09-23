@@ -3,6 +3,9 @@ import crypto from 'crypto';
 
 const userSchema = new mongoose.Schema(
   {
+    id: {
+      type: String,
+    },
     empId: {
       type: String,
       required: true,
@@ -21,23 +24,15 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      default: 'admin123',
     },
     role: {
       type: String,
-      enum: ['Admin', 'Manager', 'Cashier', 'Supervisor', 'Inventory Staff'],
       default: 'Cashier',
     },
     branch: {
       type: String,
-      enum: [
-        'Colombo Head Office',
-        'Colombo – Head Office',
-        'Kandy Branch',
-        'Galle Branch',
-        'Negombo Branch',
-        'Matara Branch',
-      ],
-      default: 'Colombo Head Office',
+      default: 'Colombo – Head Office',
     },
     status: {
       type: String,
@@ -57,7 +52,8 @@ const userSchema = new mongoose.Schema(
     toJSON: {
       virtuals: true,
       transform: (doc, ret) => {
-        ret.id = ret.empId;
+        ret.id = ret.id || ret.empId;
+        ret.empId = ret.empId || ret.id;
         delete ret._id;
         delete ret.__v;
         delete ret.password;
@@ -66,6 +62,19 @@ const userSchema = new mongoose.Schema(
     }
   }
 );
+
+userSchema.pre('validate', function (next) {
+  if (!this.empId && this.id) {
+    this.empId = this.id;
+  }
+  if (!this.id && this.empId) {
+    this.id = this.empId;
+  }
+  if (!this.password) {
+    this.password = 'admin123';
+  }
+  next();
+});
 
 // Pre-save hook to hash password before saving to DB
 userSchema.pre('save', function (next) {

@@ -1,0 +1,96 @@
+/* ═══════════════════════════════════════════════════════════
+   POS Terminal — Custom Styles
+   Supplements Tailwind utilities for the cashier-facing
+   Billing & Payment screen.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Hide scrollbar but keep scroll functionality ──────────── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Grand Total "Digital Display" Banner (Option B) ───────── */
+.pos-grand-total {
+  background: #0f172a; /* slate-900 */
+  color: #34d399;       /* emerald-400 */
+  font-family: 'Courier New', ui-monospace, monospace;
+  font-size: 1.875rem;  /* text-3xl */
+  font-weight: 800;
+  line-height: 1;
+  border-radius: 0.5rem;
+  padding: 0.875rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  letter-spacing: 0.025em;
+}
+.pos-grand-total .pos-gt-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #94a3b8; /* slate-400 */
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Keyboard shortcut hint badge ─────────────────────────── */
+.pos-kbd {
+  font-family: ui-monospace, 'Courier New', monospace;
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  background: #f1f5f9; /* slate-100 */
+  color: #64748b;      /* slate-500 */
+  border: 1px solid #e2e8f0; /* slate-200 */
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* ── Sync / connection status pulse ───────────────────────── */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+.pos-status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  animation: status-pulse 2s ease-in-out infinite;
+}
+.pos-status-dot.online  { background: #10b981; } /* emerald-500 */
+.pos-status-dot.offline { background: #ef4444; } /* red-500 */
+
+/* ── F4 clear-cart confirmation toast ─────────────────────── */
+.pos-clear-toast {
+  position: absolute;
+  bottom: 5.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fef2f2; /* red-50 */
+  border: 1px solid #fecaca; /* red-200 */
+  color: #b91c1c; /* red-700 */
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  white-space: nowrap;
+  z-index: 10;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* ── Print media — hide everything except the receipt ──────── */
+@media print {
+  body * { visibility: hidden !important; }
+  #printable-receipt,
+  #printable-receipt * {
+    visibility: visible !important;
+  }
+  #printable-receipt {
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+  .no-print { display: none !important; }
+}

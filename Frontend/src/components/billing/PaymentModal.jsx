@@ -11,6 +11,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { createBill } from '../../services/api';
+import ModalPortal from '../layout/ModalPortal';
 
 /** Format as LKR X,XXX.00 */
 function fmt(n) {
@@ -31,21 +32,12 @@ const NUMPAD_ROWS = [
   [{ label: 'C', action: 'clear' }, { label: '0', value: '0' }, { label: '.', value: '.' }],
 ];
 
-/**
- * PaymentModal — Cash / Card payment overlay with numeric keypad.
- *
- * Props:
- *   summary   { subtotal, discountValue, tax, grandTotal, cart }
- *   cashier   string  — cashier display name (from App shell)
- *   onClose   () => void
- *   onConfirm (savedBill, paymentDetails) => void  — triggers receipt modal
- */
 export default function PaymentModal({ summary, cashier = 'Cashier 01', onClose, onConfirm }) {
-  const [method, setMethod]       = useState('cash');   // 'cash' | 'card'
-  const [tendered, setTendered]   = useState('');
+  const [method, setMethod]         = useState('cash');   // 'cash' | 'card'
+  const [tendered, setTendered]     = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [apiError, setApiError]   = useState(null);
-  const tenderRef                 = useRef(null);
+  const [apiError, setApiError]     = useState(null);
+  const tenderRef                   = useRef(null);
 
   const { grandTotal = 0 } = summary ?? {};
 
@@ -121,23 +113,22 @@ export default function PaymentModal({ summary, cashier = 'Cashier 01', onClose,
 
     const { cart = [], subtotal = 0, tax = 0, discountValue: discount = 0 } = summary ?? {};
 
-    // Build the payload the backend expects
     const payload = {
       cashier,
       items: cart.map(item => ({
-        productId: item.id,          // MongoDB _id stored as 'id' after normalise()
+        productId: item.id,
         name:      item.name,
         unitPrice: item.price,
         quantity:  item.qty,
         lineTotal: parseFloat((item.price * item.qty).toFixed(2)),
       })),
-      subtotal:      parseFloat(subtotal.toFixed(2)),
-      tax:           parseFloat(tax.toFixed(2)),
-      discount:      parseFloat(discount.toFixed(2)),
-      grandTotal:    parseFloat(grandTotal.toFixed(2)),
-      paymentMethod: method === 'cash' ? 'Cash' : 'Card',
+      subtotal:       parseFloat(subtotal.toFixed(2)),
+      tax:            parseFloat(tax.toFixed(2)),
+      discount:       parseFloat(discount.toFixed(2)),
+      grandTotal:     parseFloat(grandTotal.toFixed(2)),
+      paymentMethod:  method === 'cash' ? 'Cash' : 'Card',
       tenderedAmount: method === 'cash' ? tenderedNum : grandTotal,
-      changeDue:     method === 'cash' ? Math.max(0, parseFloat(change.toFixed(2))) : 0,
+      changeDue:      method === 'cash' ? Math.max(0, parseFloat(change.toFixed(2))) : 0,
     };
 
     try {
@@ -146,8 +137,6 @@ export default function PaymentModal({ summary, cashier = 'Cashier 01', onClose,
 
       const savedBill = await createBill(payload);
 
-      // Pass both the saved bill (with server billNumber + createdAt)
-      // and the local payment details needed for the receipt display
       onConfirm(savedBill, {
         ...summary,
         method,
@@ -155,7 +144,6 @@ export default function PaymentModal({ summary, cashier = 'Cashier 01', onClose,
         change:   method === 'cash' ? Math.max(0, change) : 0,
       });
     } catch (err) {
-      // Surface error without closing the modal or clearing the cart
       setApiError(err.message);
     } finally {
       setSubmitting(false);
@@ -163,215 +151,245 @@ export default function PaymentModal({ summary, cashier = 'Cashier 01', onClose,
   }
 
   return (
-    <div
-      className="pmo-overlay"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Payment"
-      onClick={e => !submitting && e.target === e.currentTarget && onClose()}
-    >
-      <div className="pmo-modal">
-
-        {/* ── Modal Header ──────────────────────────── */}
-        <div className="pmo-header">
-          <div className="pmo-header-left">
-            <Receipt size={18} />
-            <span>Process Payment</span>
+    <ModalPortal>
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.45)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '1rem',
+        }}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Payment"
+        onClick={e => !submitting && e.target === e.currentTarget && onClose()}
+      >
+        <div
+          style={{ backgroundColor: '#ffffff' }}
+          className="w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-slate-100 p-5 animate-scale-up"
+          onClick={e => e.stopPropagation()}
+        >
+          {/* ── Modal Header ──────────────────────────── */}
+          <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 mb-3">
+            <div className="flex items-center gap-2.5 font-bold text-slate-900 text-sm">
+              <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#4A80B4] flex items-center justify-center shadow-xs">
+                <Receipt size={16} />
+              </div>
+              <span>Process Payment</span>
+            </div>
+            <button
+              id="payment-modal-close-btn"
+              className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+              onClick={onClose}
+              disabled={submitting}
+              aria-label="Close payment modal"
+            >
+              <X size={18} />
+            </button>
           </div>
-          <button
-            id="payment-modal-close-btn"
-            className="pmo-close-btn"
-            onClick={onClose}
-            disabled={submitting}
-            aria-label="Close payment modal"
-          >
-            <X size={18} />
-          </button>
-        </div>
 
-        {/* ── API Error Banner ───────────────────────── */}
-        {apiError && (
-          <div className="pmo-api-error" role="alert" aria-live="assertive">
-            <AlertCircle size={16} />
-            <span>{apiError}</span>
+          {/* ── API Error Banner ───────────────────────── */}
+          {apiError && (
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs font-medium flex items-center gap-2 mb-3" role="alert" aria-live="assertive">
+              <AlertCircle size={16} />
+              <span>{apiError}</span>
+            </div>
+          )}
+
+          {/* ── Grand Total Banner ────────────────────── */}
+          <div className="bg-emerald-50 text-emerald-950 border border-emerald-500/40 rounded-2xl p-4 flex items-center justify-between shadow-xs mb-4">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-900">Grand Total</span>
+            <span className="font-mono text-3xl font-extrabold text-emerald-700">{fmt(grandTotal)}</span>
           </div>
-        )}
 
-        {/* ── Grand Total Banner ────────────────────── */}
-        <div className="pmo-grand-total-banner">
-          <span className="pmo-gt-label">Grand Total</span>
-          <span className="pmo-gt-value">{fmt(grandTotal)}</span>
-        </div>
+          {/* ── Payment Method Toggle ─────────────────── */}
+          <div className="flex gap-2 mb-4">
+            <button
+              id="payment-method-cash"
+              className={`flex-1 flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors border cursor-pointer ${
+                method === 'cash'
+                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                  : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
+              }`}
+              onClick={() => setMethod('cash')}
+              disabled={submitting}
+            >
+              <Banknote size={18} />
+              <span>Cash</span>
+            </button>
+            <button
+              id="payment-method-card"
+              className={`flex-1 flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors border cursor-pointer ${
+                method === 'card'
+                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                  : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border-slate-200'
+              }`}
+              onClick={() => setMethod('card')}
+              disabled={submitting}
+            >
+              <CreditCard size={18} />
+              <span>Card</span>
+            </button>
+          </div>
 
-        {/* ── Payment Method Toggle ─────────────────── */}
-        <div className="pmo-method-toggle">
-          <button
-            id="payment-method-cash"
-            className={`pmo-method-btn${method === 'cash' ? ' active' : ''}`}
-            onClick={() => setMethod('cash')}
-            disabled={submitting}
-          >
-            <Banknote size={18} />
-            <span>Cash</span>
-          </button>
-          <button
-            id="payment-method-card"
-            className={`pmo-method-btn${method === 'card' ? ' active' : ''}`}
-            onClick={() => setMethod('card')}
-            disabled={submitting}
-          >
-            <CreditCard size={18} />
-            <span>Card</span>
-          </button>
-        </div>
+          {/* ── Cash Panel ───────────────────────────── */}
+          {method === 'cash' && (
+            <div className="pmo-cash-panel">
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1" htmlFor="payment-tender-input">
+                CASH TENDERED (LKR)
+              </label>
+              <div className="relative flex items-center mb-3">
+                <span className="absolute left-3.5 text-xs font-bold text-slate-400">LKR</span>
+                <input
+                  id="payment-tender-input"
+                  ref={tenderRef}
+                  type="text"
+                  inputMode="none"
+                  className={`w-full border rounded-xl pl-12 pr-10 py-2.5 text-base font-mono font-bold outline-none focus:ring-2 focus:ring-emerald-500/20 bg-slate-50 ${
+                    isShort ? 'border-rose-400 text-rose-600' : 'border-slate-200 text-slate-800 focus:border-emerald-500'
+                  }`}
+                  placeholder="0.00"
+                  value={tendered}
+                  onChange={handleTenderChange}
+                  autoComplete="off"
+                  readOnly
+                  disabled={submitting}
+                />
+                {tendered.length > 0 && (
+                  <button
+                    className="absolute right-3 text-slate-400 hover:text-rose-500 cursor-pointer"
+                    onClick={() => setTendered('')}
+                    aria-label="Clear tendered amount"
+                    tabIndex={-1}
+                    disabled={submitting}
+                  >
+                    <Delete size={16} />
+                  </button>
+                )}
+              </div>
 
-        {/* ── Cash Panel ───────────────────────────── */}
-        {method === 'cash' && (
-          <div className="pmo-cash-panel">
+              {/* ── Numeric Keypad ───────────────────── */}
+              <div className="grid grid-cols-3 gap-1.5 mb-3" role="group" aria-label="Numeric keypad">
+                {NUMPAD_ROWS.flat().map(key => (
+                  <button
+                    key={key.label}
+                    id={`numpad-key-${key.label}`}
+                    className={`py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-100 active:bg-slate-200 text-slate-800 transition-colors cursor-pointer ${
+                      key.action === 'clear' ? 'text-rose-600 hover:bg-rose-50' : ''
+                    }`}
+                    onClick={() => handleNumpadKey(key)}
+                    disabled={submitting}
+                  >
+                    {key.label}
+                  </button>
+                ))}
+              </div>
 
-            {/* Tender input display */}
-            <label className="pmo-field-label" htmlFor="payment-tender-input">
-              CASH TENDERED (LKR)
-            </label>
-            <div className="pmo-tender-wrap">
-              <span className="pmo-tender-prefix">LKR</span>
-              <input
-                id="payment-tender-input"
-                ref={tenderRef}
-                type="text"
-                inputMode="none"
-                className={`pmo-tender-input${isShort ? ' short' : ''}`}
-                placeholder="0.00"
-                value={tendered}
-                onChange={handleTenderChange}
-                autoComplete="off"
-                aria-label="Cash tendered amount"
-                readOnly
-                disabled={submitting}
-              />
-              {tendered.length > 0 && (
+              {/* ── Denomination Chips ───────────────── */}
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {DENOM_CHIPS.map(d => (
+                  <button
+                    key={d}
+                    id={`payment-denom-${d}`}
+                    className="bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 rounded-xl px-3 py-1.5 font-semibold text-xs transition-colors cursor-pointer"
+                    onClick={() => addDenom(d)}
+                    disabled={submitting}
+                  >
+                    +{d.toLocaleString()}
+                  </button>
+                ))}
                 <button
-                  className="pmo-tender-clear-btn"
-                  onClick={() => setTendered('')}
-                  aria-label="Clear tendered amount"
-                  tabIndex={-1}
+                  id="payment-denom-exact"
+                  className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl px-3 py-1.5 font-bold text-xs transition-colors cursor-pointer"
+                  onClick={setExact}
                   disabled={submitting}
                 >
-                  <Delete size={14} />
+                  Exact
                 </button>
-              )}
-            </div>
+              </div>
 
-            {/* ── Numeric Keypad ───────────────────── */}
-            <div className="pmo-numpad" role="group" aria-label="Numeric keypad">
-              {NUMPAD_ROWS.map((row, ri) => (
-                <div key={ri} className="pmo-numpad-row">
-                  {row.map(key => (
-                    <button
-                      key={key.label}
-                      id={`numpad-key-${key.label}`}
-                      className={`pmo-numpad-btn${key.action === 'clear' ? ' clear' : ''}`}
-                      onClick={() => handleNumpadKey(key)}
-                      aria-label={key.action === 'clear' ? 'Clear' : key.label}
-                      disabled={submitting}
-                    >
-                      {key.label}
-                    </button>
-                  ))}
-                </div>
-              ))}
+              {/* ── Change / Shortage Row ───────────── */}
+              <div className={`p-3 rounded-xl flex items-center justify-between font-bold text-sm ${
+                isShort
+                  ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                  : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+              }`}>
+                {isShort ? (
+                  <>
+                    <div className="flex items-center gap-1.5">
+                      <AlertCircle size={16} />
+                      <span>Short by</span>
+                    </div>
+                    <span>{fmt(Math.abs(change))}</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-1.5">
+                      <CheckCircle2 size={16} />
+                      <span>Change Due</span>
+                    </div>
+                    <span className="font-mono text-base">{change >= 0 ? fmt(change) : '—'}</span>
+                  </>
+                )}
+              </div>
             </div>
+          )}
 
-            {/* ── Denomination Chips ───────────────── */}
-            <div className="pmo-denom-chips">
-              {DENOM_CHIPS.map(d => (
-                <button
-                  key={d}
-                  id={`payment-denom-${d}`}
-                  className="pmo-denom-chip"
-                  onClick={() => addDenom(d)}
-                  disabled={submitting}
-                >
-                  +{d.toLocaleString()}
-                </button>
-              ))}
-              <button
-                id="payment-denom-exact"
-                className="pmo-denom-chip exact"
-                onClick={setExact}
-                disabled={submitting}
-              >
-                Exact
-              </button>
-            </div>
-
-            {/* ── Change / Shortage Row ───────────── */}
-            <div className={`pmo-change-row${isShort ? ' short' : change > 0 ? ' surplus' : ''}`}>
-              {isShort ? (
-                <>
-                  <AlertCircle size={16} />
-                  <span>Short by {fmt(Math.abs(change))}</span>
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 size={16} />
-                  <span>Change Due</span>
-                  <span className="pmo-change-value">{change >= 0 ? fmt(change) : '—'}</span>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ── Card Panel ───────────────────────────── */}
-        {method === 'card' && (
-          <div className="pmo-card-panel">
-            <div className="pmo-card-terminal">
-              <div className="pmo-card-pulse">
+          {/* ── Card Panel ───────────────────────────── */}
+          {method === 'card' && (
+            <div className="py-8 flex flex-col items-center justify-center text-center bg-slate-50 rounded-2xl border border-slate-200/60 my-2">
+              <div className="w-16 h-16 rounded-2xl bg-blue-50 text-[#4A80B4] flex items-center justify-center mb-3 shadow-xs animate-pulse">
                 <Nfc size={32} />
               </div>
-              <p className="pmo-card-instruction">
+              <p className="font-bold text-slate-800 text-sm">
                 Please swipe or tap card on the POS terminal.
               </p>
-              <p className="pmo-card-sub">
+              <p className="text-xs text-slate-400 mt-1">
                 Visa · Mastercard · AMEX · Lanka QR accepted
               </p>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* ── Action Buttons ────────────────────────── */}
-        <div className="pmo-actions">
-          <button
-            id="payment-cancel-btn"
-            className="pmo-cancel-btn"
-            onClick={onClose}
-            disabled={submitting}
-          >
-            Cancel
-          </button>
-          <button
-            id="payment-complete-btn"
-            className="pmo-complete-btn"
-            onClick={handleConfirm}
-            disabled={!canComplete}
-            aria-disabled={!canComplete}
-            aria-busy={submitting}
-          >
-            {submitting ? (
-              <>
-                <Loader2 size={18} className="spin" />
-                <span>Processing…</span>
-              </>
-            ) : (
-              <>
-                <CheckCircle2 size={18} strokeWidth={2.5} />
-                <span>Complete &amp; Print Bill</span>
-              </>
-            )}
-          </button>
+          {/* ── Action Buttons ────────────────────────── */}
+          <div className="flex items-center gap-3 mt-4 pt-3 border-t border-slate-100">
+            <button
+              id="payment-cancel-btn"
+              className="bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl px-5 py-3 font-semibold text-xs transition-colors cursor-pointer disabled:opacity-50"
+              onClick={onClose}
+              disabled={submitting}
+            >
+              Cancel
+            </button>
+            <button
+              id="payment-complete-btn"
+              className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold h-12 flex-1 rounded-xl text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:bg-slate-300 disabled:cursor-not-allowed"
+              onClick={handleConfirm}
+              disabled={!canComplete}
+            >
+              {submitting ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  <span>Processing…</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 size={16} strokeWidth={2.5} />
+                  <span>Complete &amp; Print Bill</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </ModalPortal>
   );
 }

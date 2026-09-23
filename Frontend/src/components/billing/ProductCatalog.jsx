@@ -226,10 +226,10 @@ export default function ProductCatalog({
         </div>
 
         {/* Category filter dropdown */}
-        <div className="catalog-filter-wrap">
+        <div className="relative">
           <select
             id="catalog-category-filter"
-            className="catalog-filter-select"
+            className="bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2 pr-8 text-sm font-medium transition-colors appearance-none cursor-pointer"
             value={category}
             onChange={e => setCategory(e.target.value)}
             aria-label="Filter by category"
@@ -238,11 +238,11 @@ export default function ProductCatalog({
               <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
-          <ChevronDown size={14} className="catalog-filter-chevron" />
+          <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
         </div>
 
         {/* Live product counter + reload button */}
-        <div className="catalog-counter" aria-live="polite">
+        <div className="flex items-center gap-2 text-xs font-semibold text-slate-600" aria-live="polite">
           <Package size={14} />
           <span>
             {loading
@@ -252,7 +252,7 @@ export default function ProductCatalog({
           {!loading && (
             <button
               id="catalog-refresh-btn"
-              className="catalog-refresh-btn"
+              className="bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2 font-medium transition-colors cursor-pointer"
               onClick={loadProducts}
               aria-label="Refresh product list"
               title="Refresh from server"
@@ -320,13 +320,13 @@ export default function ProductCatalog({
               {/* Stock & Low-stock badge row */}
               <div className="pcard-badges">
                 {isLowStock && (
-                  <span className="pcard-badge pcard-badge--low">
+                  <span className="bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200 px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1">
                     <AlertTriangle size={10} />
                     Low Stock
                   </span>
                 )}
                 {isOutOfStock && (
-                  <span className="pcard-badge pcard-badge--oos">Out of Stock</span>
+                  <span className="bg-rose-50 text-rose-700 ring-1 ring-inset ring-rose-200 px-2 py-0.5 rounded-full text-[10px] font-bold">Out of Stock</span>
                 )}
               </div>
 
@@ -342,9 +342,16 @@ export default function ProductCatalog({
                 <p className="pcard-price">{formatLKR(product.price)}</p>
                 <p className="pcard-stock">
                   <span
-                    className={`stock-dot ${isOutOfStock ? 'out' : isLowStock ? 'low' : 'ok'}`}
-                  />
-                  {isOutOfStock ? 'Out of stock' : `${product.stock} in stock`}
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      isOutOfStock
+                        ? "bg-rose-50 text-rose-700 ring-1 ring-inset ring-rose-200"
+                        : isLowStock
+                        ? "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200"
+                        : "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200"
+                    }`}
+                  >
+                    {isOutOfStock ? 'Out of stock' : `${product.stock} in stock`}
+                  </span>
                 </p>
               </div>
 
