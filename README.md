@@ -1,217 +1,64 @@
- lakna-Authentication-&-User-Management
-# Authentication and User Management
+# 🛒 EgoTech World — Supermarket POS & ERP System
 
-This component provides authentication and staff account management for the EgoTech World retail system. It gives employees a sign-in screen and administrators a central place to manage staff identities, roles, branches, and account status.
+A modern, fast, and responsive Point of Sale (POS) and retail management web application built for supermarket operations. The system features role-based access, real-time inventory tracking, high-speed cashier checkout with barcode scanning, automated receipt printing, and sales reporting.
 
-## Scope
+---
 
-This component covers:
+## 🌟 Key Features & Modules
 
-- Employee sign-in using an employee ID, username, or email address
-- Active and inactive account handling
-- Role-based staff records for Admin, Manager, Cashier, Supervisor, and Inventory Staff
-- Branch assignment for each employee
-- User search by name, employee ID, or email
-- Filtering users by role and account status
-- Adding, editing, activating, deactivating, and deleting users
-- Last-login tracking and current-user session persistence
-- Responsive layouts for desktop, tablet, and mobile screens
+### 1. ⚡ Point of Sale (POS) Terminal & Live Billing
+- **High-Speed Checkout:** Real-time calculation of subtotal, VAT/taxes, discounts, and change return.
+- **Continuous Barcode Scanner:** Hardware barcode scanner integration with auto-focus and instant cart addition on scan.
+- **Instant Search:** Real-time product filtering by Item Name, SKU, and Barcode.
+- **View Toggle:** Seamlessly switch between **Card Grid View** (with product thumbnails) and a fast **Compact List View** (dense table for rapid cashier checkout).
+- **Payment Processing:** Support for Cash (with quick tender shortcut buttons), Card, and LankaQR.
+- **Built-in POS Calculator:** Fast terminal calculator (`F3`) to quickly compute tender amounts and discounts.
+- **Receipt Modal:** Instant thermal receipt generation after every completed transaction.
 
-## Main Screens
+### 2. 🏷️ Product & Category Management
+- Full CRUD operations for supermarket products and department categories.
+- Real-time price updates and categorization.
+- Dynamic search and filter tools for catalog administration.
 
-### Login
+### 3. 📦 Inventory Management & Stock Tracking
+- Real-time stock level monitoring across all branches.
+- Low-stock and out-of-stock automatic alerts and badges.
+- Min-threshold controls to prevent overselling.
 
-The login screen supports:
+### 4. 🧾 Bill History & Sales Reports
+- Comprehensive transaction history log with bill filtering by date, bill number, and cashier.
+- Reprint previous customer receipts on demand.
+- Export sales reports directly to Excel (`.xlsx`) for accounting and auditing.
 
-- Employee ID or username input
-- Password visibility toggle
-- Remember-this-station option
-- Loading and validation states
-- Clear messages for invalid or deactivated accounts
-- Quick demo sign-ins for Admin, Cashier, Manager, and Inventory Staff personas
+### 5. 👥 Authentication & Role-Based Access Control (RBAC)
+- Secure staff login via Employee ID, username, or email.
+- Multi-role permission architecture:
+  - **Admin:** Full system control, branch management, employee accounts, and financial reports.
+  - **Manager:** Store management, inventory adjustments, and billing logs.
+  - **Cashier:** Dedicated access to POS Billing Terminal and live sales.
+  - **Inventory Staff:** Product catalog, stock replenishment, and category controls.
 
-### User Management
+---
 
-The staff management screen provides:
+## 🛠️ Tech Stack
 
-- Total, active, and inactive staff counts
-- Search and role/status filters
-- Employee ID, email, role, branch, status, and last-activity details
-- Add and edit user modal forms
-- Generated employee IDs and temporary passwords for new accounts
-- User activation/deactivation controls
-- Delete confirmation before removing an account
+- **Frontend:** React.js, Tailwind CSS, Lucide React (Icons), Vite
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB Atlas (Mongoose ODM)
+- **Exporting & Utilities:** SheetJS / XLSX
 
-## Roles and Branches
+---
 
-Supported roles:
+## 🚀 Getting Started
 
-- Admin
-- Manager
-- Cashier
-- Supervisor
-- Inventory Staff
+Follow these steps to set up and run the project locally.
 
-Configured branches include Colombo Head Office, Kandy, Galle, Negombo, and Matara.
+### 1. Prerequisites
+- [Node.js](https://nodejs.org/) (v16 or higher)
+- [Git](https://git-scm.com/)
+- Active [MongoDB Atlas](https://cloud.mongodb.com/) cluster or local MongoDB instance.
 
-## Technology
-
-- **Frontend:** React 19, Vite, Tailwind CSS, Lucide React
-- **Backend:** Node.js, Express, Mongoose
-- **Database:** MongoDB
-- **Client persistence:** Browser `localStorage` for the demo session and user list
-
-## Project Structure
-
-```text
-backend/
-  models.js       User schema and related data models
-  server.js       Express API, authentication, and user routes
-frontend/
-  AuthUserManagement.jsx
-  src/
-    components/auth/LoginPage.jsx
-    components/users/UserManagementPage.jsx
-    components/users/UserModal.jsx
-    context/AppContext.jsx
-```
-
-## API Endpoints
-
-### Authentication
-
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| `POST` | `/api/auth/login` | Sign in with an employee ID, username, or email |
-
-### Users
-
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/users` | List users |
-| `POST` | `/api/users` | Create a user |
-| `PUT` | `/api/users/:id` | Update user details |
-| `PATCH` | `/api/users/:id/status` | Toggle Active/Inactive status |
-| `DELETE` | `/api/users/:id` | Delete a user |
-
-The backend also exposes `GET /api/health` for a basic service health check.
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 16 or newer
-- A MongoDB instance accessible by the backend
-
-### Install dependencies
-
-From the project root:
-
+### 2. Clone the Repository
 ```bash
-cd backend
-npm install
-
-cd ../frontend
-npm install
-```
-
-### Start the backend
-
-In one terminal:
-
-```bash
-cd backend
-npm run dev
-```
-
-The API listens on `http://localhost:5000` by default.
-
-### Start the frontend
-
-In a second terminal:
-
-```bash
-cd frontend
-npm run dev
-```
-
-Vite prints the local frontend URL, normally `http://localhost:5173`.
-
-### Build the frontend
-
-```bash
-cd frontend
-npm run build
-```
-
-## Demo Login
-
-The demo supports the seeded Administrator account and quick persona buttons on the login screen. In the current demo flow, `admin123` can be used as the password for a quick login or for a valid demo sign-in.
-
-For production use, replace the demo authentication flow with hashed passwords, signed sessions or JWTs, protected API middleware, and environment-based database configuration.
-
-## Notes
-
-- The current React context persists users and the active session in browser `localStorage`.
-- The backend connects to MongoDB and seeds initial user data when the users collection is empty.
-- Account status is checked during login, so inactive users cannot sign in.
-=======
- HEAD
-# POS System
-
-A Point of Sale (POS) system with separate Frontend and Backend.
-
-## Project Structure
-
-```
-POS System/
-├── Frontend/    → React + Vite application
-└── Backend/     → Express.js API server
-```
-
-## Getting Started
-
-### Frontend
-
-```bash
-cd Frontend
-npm install
-npm run dev
-```
-
-The frontend dev server will start at `http://localhost:5173`.
-
-### Backend
-
-```bash
-cd Backend
-cp .env.example .env    # Configure environment variables
-npm install
-npm run dev
-```
-
-The backend server will start at `http://localhost:5000`.
-
-## Tech Stack
-
-- **Frontend:** React 19, Vite 8, React Router, Lucide Icons
-- **Backend:** Express.js, CORS, dotenv
-=======
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
- main
-main
+git clone [https://github.com/Ecoworld-POS-System/Supermarket-POS-system.git](https://github.com/Ecoworld-POS-System/Supermarket-POS-system.git)
+cd Supermarket-POS-system
